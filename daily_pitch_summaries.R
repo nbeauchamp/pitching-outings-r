@@ -7,8 +7,9 @@ suppressPackageStartupMessages({
   library(lubridate)
   library(httr)
   library(jsonlite)
-  library(baseballr)
+  library(readr)
 })
+
 
 timestamp_msg <- function(msg) {
   cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S"), msg))
