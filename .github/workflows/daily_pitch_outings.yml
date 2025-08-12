@@ -8,6 +8,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -18,18 +19,29 @@ jobs:
       - name: Install system deps
         run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev libssl-dev
 
-      - name: Install R packages
-        run: |
-          Rscript -e 'install.packages(c("dplyr","tidyr","lubridate","httr","jsonlite","readr"), repos="https://cloud.r-project.org")'
+      # 🚀 Install deps with automatic caching keyed by the package set
+      - name: Install & cache R packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::dplyr
+            any::tidyr
+            any::lubridate
+            any::httr
+            any::jsonlite
+            any::readr
+          cache-version: 1
 
+      # 🔎 Debug: print the first 80 lines of the script and check for any 'baseballr' references
       - name: Show script head + search for baseballr
         run: |
           echo "=== HEAD (first 80 lines) ==="
-          sed -n '1,80p' daily_pitch_summaries.R
+          sed -n '1,80p' daily_pitch_summaries.R || true
           echo "=== GREP for baseballr ==="
           grep -n 'baseballr' daily_pitch_summaries.R || true
-          
+
       - name: Run script
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: Rscript daily_pitch_summaries.R
+
