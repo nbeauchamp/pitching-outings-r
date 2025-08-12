@@ -141,9 +141,10 @@ main <- function() {
   }
 
   timestamp_msg("Rendering summaries...")
-  lines <- apply(outings, 1, function(r) render_line(as_tibble_row(r)))
-  header <- paste0("*Pitching Outings — ", yday_dates_central()[1], "*")
-  msg <- paste(c(header, sort(lines))), collapse = "\n")
+    lines  <- apply(outings, 1, function(r) render_line(as_tibble_row(r)))
+    header <- paste0("*Pitching Outings — ", yday_dates_central()[1], "*")
+    msg    <- paste(c(header, sort(lines)), collapse = "\n")   # <-- corrected line
+
 
   timestamp_msg("Posting to Slack...")
   post_to_slack(msg)
